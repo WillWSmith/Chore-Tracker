@@ -7,3 +7,4 @@ function ChoreTracker() {
 }
 
 export default ChoreTracker;
+
