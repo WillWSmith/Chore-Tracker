@@ -24,124 +24,149 @@ function ChoreTable() {
   const [allTimeHighScores, setAllTimeHighScores] = useState({ Will: 0, Kristyn: 0 });
 
   useEffect(() => {
-    const fetchChores = async () => {
+    const fetchChoresAndScores = async () => {
       try {
-        // Fetch daily chores from Firestore
+        // Fetch daily, weekly, and monthly chores
         const dailyChoresSnapshot = await db.collection('dailyChores').get();
         const dailyChoresData = {};
         dailyChoresSnapshot.forEach(doc => {
           dailyChoresData[doc.id] = doc.data();
         });
         setCompletedDailyChores(dailyChoresData);
-
-        // Fetch weekly chores from Firestore
+  
         const weeklyChoresSnapshot = await db.collection('weeklyChores').get();
         const weeklyChoresData = {};
         weeklyChoresSnapshot.forEach(doc => {
           weeklyChoresData[doc.id] = doc.data();
         });
         setCompletedWeeklyChores(weeklyChoresData);
-
-        // Fetch monthly chores from Firestore
+  
         const monthlyChoresSnapshot = await db.collection('monthlyChores').get();
         const monthlyChoresData = {};
         monthlyChoresSnapshot.forEach(doc => {
           monthlyChoresData[doc.id] = doc.data();
         });
         setCompletedMonthlyChores(monthlyChoresData);
-
-        // Fetch last week's scores from Firestore
-        const willLastWeeksScoresSnapshot = await db.collection('userScores').doc('Will').get();
-        const willLastWeeksScoresData = willLastWeeksScoresSnapshot.data()?.lastWeekScores || 0;
-        const kristynLastWeeksScoresSnapshot = await db.collection('userScores').doc('Kristyn').get();
-        const kristynLastWeeksScoresData = kristynLastWeeksScoresSnapshot.data()?.lastWeekScores || 0;
-        setLastWeeksScores({ Will: willLastWeeksScoresData, Kristyn: kristynLastWeeksScoresData });
-
-        // Fetch all-time high scores from Firestore
-        const willAllTimeHighScoresSnapshot = await db.collection('userScores').doc('Will').get();
-        const willAllTimeHighScoresData = willAllTimeHighScoresSnapshot.data()?.allTimeHighScores || 0;
-        const kristynAllTimeHighScoresSnapshot = await db.collection('userScores').doc('Kristyn').get();
-        const kristynAllTimeHighScoresData = kristynAllTimeHighScoresSnapshot.data()?.allTimeHighScores || 0;
-        setAllTimeHighScores({ Will: willAllTimeHighScoresData, Kristyn: kristynAllTimeHighScoresData });
+  
+        // Fetch all-time high scores
+        const willDoc = await db.collection('userScores').doc('Will').get();
+        const kristynDoc = await db.collection('userScores').doc('Kristyn').get();
+        const willChoresData = willDoc.data()
+        const kristynChoresData = kristynDoc.data()
+  
+        setAllTimeHighScores({
+          Will: willChoresData.allTimeHighScores,
+          Kristyn: kristynChoresData.allTimeHighScores
+        });
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
-    fetchChores();
+  
+    fetchChoresAndScores();
   }, []);
 
-  const handleDailyChoreClick = (day, chore) => {
-    setCompletedDailyChores(prevState => ({
-      ...prevState,
-      [day]: {
-        ...prevState[day],
-        [chore]: prevState[day]?.[chore] === 'Will' ? 'Kristyn' : (prevState[day]?.[chore] === 'Kristyn' ? null : 'Will'),
-      },
-    }));
+  const handleDailyChoreClick = async (choreId, day) => {
+    try {
+      const docRef = db.collection('dailyChores').doc(choreId);
+      const doc = await docRef.get();
+      const choreData = doc.data();
+      
+      const updatedDays = { ...choreData.days, [day]: 'completed' };
+      await docRef.update({ days: updatedDays });
+    } catch (error) {
+      console.error('Error updating chore:', error);
+    }
   };
 
-  const handleWeeklyChoreClick = (chore) => {
-    setCompletedWeeklyChores(prevState => ({
-      ...prevState,
-      [chore]: prevState[chore] === 'Will' ? 'Kristyn' : (prevState[chore] === 'Kristyn' ? null : 'Will'),
-    }));
+  const handleWeeklyChoreClick = async (choreId) => {
+    try {
+      const docRef = db.collection('weeklyChores').doc(choreId);
+      const doc = await docRef.get();
+      const choreData = doc.data();
+      
+      const updatedCompletedBy = choreData.completedBy ? null : 'completed';
+      await docRef.update({ completedBy: updatedCompletedBy });
+    } catch (error) {
+      console.error('Error updating chore:', error);
+    }
   };
 
-  const handleMonthlyChoreClick = (chore) => {
-    setCompletedMonthlyChores(prevState => {
-      const prevChore = prevState[chore] || {};
-      const completedBy = prevChore.completedBy === 'Will' ? 'Kristyn' : (prevChore.completedBy === 'Kristyn' ? null : 'Will');
-      const currentDate = new Date();
-      const completedDate = completedBy ? currentDate.toISOString().split('T')[0] : null;
-
-      return {
-        ...prevState,
-        [chore]: {
-          completedBy,
-          completedDate
-        }
-      };
-    });
+  const handleMonthlyChoreClick = async (choreId) => {
+    try {
+      const docRef = db.collection('monthlyChores').doc(choreId);
+      const doc = await docRef.get();
+      const choreData = doc.data();
+      
+      const completedBy = choreData.completedBy ? null : 'Will'; // Assuming toggle behavior for monthly chores
+      const completedDate = completedBy ? new Date().toISOString() : null;
+      await docRef.update({ completedBy, completedDate });
+    } catch (error) {
+      console.error('Error updating chore:', error);
+    }
   };
 
-  const calculateScores = () => {
-    let willScore = 0;
-    let kristynScore = 0;
 
-    // Calculate scores for daily chores
-    daysOfWeek.forEach(day => {
-      Object.values(completedDailyChores[day] || {}).forEach(chore => {
-        if (chore === 'Will') willScore++;
-        if (chore === 'Kristyn') kristynScore++;
-      });
-    });
+  const calculateScores = async () => {
+    try {
+// Fetch user scores
+const willDoc = await db.collection('userScores').doc('Will').get();
+const kristynDoc = await db.collection('userScores').doc('Kristyn').get();
+const willChoresData = willDoc.data() || { lastWeekScores: 0 };
+const kristynChoresData = kristynDoc.data() || { lastWeekScores: 0 };
 
-    // Calculate scores for weekly chores
-    weeklyChores.forEach(chore => {
-      if (completedWeeklyChores[chore] === 'Will') willScore += 2;
-      if (completedWeeklyChores[chore] === 'Kristyn') kristynScore += 2;
-    });
+// Calculate scores based on completed chores
+let willScore = 0;
+let kristynScore = 0;
 
-    // Calculate scores for monthly chores completed in the last week
-    const lastWeek = new Date();
-    lastWeek.setDate(lastWeek.getDate() - 7);
-    monthlyChores.forEach(chore => {
-      const completedDate = new Date(completedMonthlyChores[chore]?.completedDate);
-      if (completedMonthlyChores[chore]?.completedBy && completedDate > lastWeek) {
-        if (completedMonthlyChores[chore].completedBy === 'Will') willScore += 3;
-        if (completedMonthlyChores[chore].completedBy === 'Kristyn') kristynScore += 3;
-      }
-    });
+// Calculate scores for daily chores
+daysOfWeek.forEach(day => {
+  Object.values(completedDailyChores[day] || {}).forEach(chore => {
+    if (chore === 'Will') willScore++;
+    if (chore === 'Kristyn') kristynScore++;
+  });
+});
 
-    // Update last week's scores
-    setLastWeeksScores({ Will: willScore, Kristyn: kristynScore });
+// Calculate scores for weekly chores
+weeklyChores.forEach(chore => {
+  if (completedWeeklyChores[chore] === 'Will') willScore += 2;
+  if (completedWeeklyChores[chore] === 'Kristyn') kristynScore += 2;
+});
 
-    // Update all-time high scores
-    setAllTimeHighScores(prevScores => ({
-      Will: Math.max(willScore, prevScores.Will),
-      Kristyn: Math.max(kristynScore, prevScores.Kristyn)
-    }));
+// Calculate scores for monthly chores completed in the last week
+const lastWeek = new Date();
+lastWeek.setDate(lastWeek.getDate() - 7);
+monthlyChores.forEach(chore => {
+  const completedDate = new Date(completedMonthlyChores[chore]?.completedDate);
+  if (completedMonthlyChores[chore]?.completedBy && completedDate > lastWeek) {
+    if (completedMonthlyChores[chore].completedBy === 'Will') willScore += 3;
+    if (completedMonthlyChores[chore].completedBy === 'Kristyn') kristynScore += 3;
+  }
+});
+
+// Update last week's scores
+setLastWeeksScores({ Will: willScore, Kristyn: kristynScore });
+
+// Update all-time high scores in Firestore if necessary
+if (willScore > willChoresData.lastWeekScores || kristynScore > kristynChoresData.lastWeekScores) {
+  await db.collection('userScores').doc('Will').update({
+    lastWeekScores: willScore,
+  });
+  await db.collection('userScores').doc('Kristyn').update({
+    lastWeekScores: kristynScore,
+  });
+}
+
+// Update last week's scores in Firestore
+await db.collection('userScores').doc('Will').update({
+  lastWeekScores: willScore,
+});
+await db.collection('userScores').doc('Kristyn').update({
+  lastWeekScores: kristynScore,
+});
+    } catch (error) {
+      console.error('Error calculating scores:', error);
+    }
   };
 
   return (
