@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../Firebase'
 import { collection, getDocs } from 'firebase/firestore';
 import { doc, updateDoc } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 
 const MonthlyChores = () => {
   const [chores, setChores] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'monthlyChores'));
-        const choresData = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        setChores(choresData);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-        // Handle the error appropriately in your UI
-      }
+      const querySnapshot = await getDocs(collection(db, 'monthlyChores'));
+      const choresData = querySnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+        // Ensure completedDate is either kept as a Firestore Timestamp or converted to a Date object
+        completedDate: doc.data().completedDate ? new Date(doc.data().completedDate.toDate()) : null
+      }));
+      setChores(choresData);
     };
 
     fetchData();
@@ -25,33 +26,36 @@ const MonthlyChores = () => {
     const chore = chores.find(c => c.id === choreId);
     const currentStatus = chore.completedBy;
     let nextStatus;
-    let updateData = { completedBy: null }; // Default update object with only completedBy
+    let updateData = {};
   
     switch (currentStatus) {
       case 'null':
         nextStatus = 'Will';
-        // Set completionDate to now only if marking the chore as completed
+        // Set completedBy to 'Will' and completionDate to now, as a Firestore Timestamp
         updateData = {
           completedBy: nextStatus,
-          completedDate: new Date(),
+          completedDate: Timestamp.fromDate(new Date()), // Convert JavaScript Date to Firestore Timestamp
         };
         break;
       case 'Will':
         nextStatus = 'Kristyn';
-        // Assume completionDate remains unchanged if toggling between Will and Kristyn
+        // Set completedBy to 'Kristyn' without touching completedDate
         updateData = {
           completedBy: nextStatus,
-          // Do not update completedDate here if you want to preserve the original completion date
+          // completedDate remains unchanged, so we don't include it in updateData
         };
         break;
       case 'Kristyn':
         nextStatus = 'null';
-        // Do not clear the completion date when resetting to 'null'
-        updateData = { completedBy: nextStatus };
+        // Set completedBy to 'null' without clearing the completedDate
+        updateData = {
+          completedBy: nextStatus,
+          // Optionally clear completedDate here if that's desired behavior
+          // If keeping the date, just don't include it in updateData
+        };
         break;
       default:
         nextStatus = 'null';
-        // Default case, handling unexpected statuses by resetting to 'null'
         updateData = { completedBy: nextStatus };
         break;
     }
@@ -67,14 +71,22 @@ const MonthlyChores = () => {
       await updateDoc(choreRef, updateData);
     } catch (error) {
       console.error("Error updating document: ", error);
-      // Handle the error appropriately in your UI
     }
-  };  
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return isNaN(date.getTime()) ? '' : date.toLocaleDateString();
   };
+
+  const formatDate = (date) => {
+    // Check if it's a Firestore Timestamp by checking for toDate method
+    if (date && typeof date.toDate === 'function') {
+      // It's a Firestore Timestamp, convert to JavaScript Date object
+      return date.toDate().toLocaleDateString();
+    } else if (date instanceof Date) {
+      // It's already a JavaScript Date object
+      return date.toLocaleDateString();
+    }
+    // Not a date we can format
+    return '';
+  };
+  
 
   return (
     <div>

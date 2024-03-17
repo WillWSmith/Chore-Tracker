@@ -7,7 +7,7 @@ import MonthlyChores from './components/MonthlyChores';
 import HiScores from './components/HiScores';
 import NewWeekButton from './components/NewWeekButton';
 import { db } from './Firebase';
-import { collection, getDocs, updateDoc, doc, writeBatch, query, where, increment } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, writeBatch, query, where, increment, getDoc } from 'firebase/firestore';
 
 function App() {
   const [refreshScores, setRefreshScores] = useState(false);
@@ -22,57 +22,38 @@ function App() {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   
-    // Calculate scores for daily chores
-    const dailyChoresSnapshot = await getDocs(collection(db, 'dailyChores'));
-    dailyChoresSnapshot.forEach((doc) => {
-      Object.values(doc.data().days).forEach(day => {
-        if (day.completedBy === 'Will') willScore += 1;
-        if (day.completedBy === 'Kristyn') kristynScore += 1;
-      });
-      // Reset daily chores
-      updateDoc(doc.ref, { days: { Monday: { completedBy: 'null' }, Tuesday: { completedBy: 'null' }, Wednesday: { completedBy: 'null' }, Thursday: { completedBy: 'null' }, Friday: { completedBy: 'null' }, Saturday: { completedBy: 'null' }, Sunday: { completedBy: 'null' } } });
+    // Define references to the users' score documents
+    const willUserRef = doc(db, 'userScores', 'Will');
+    const kristynUserRef = doc(db, 'userScores', 'Kristyn');
+
+    // Fetch current scores from the database
+    const willUserDoc = await getDoc(willUserRef);
+    const kristynUserDoc = await getDoc(kristynUserRef);
+  
+    // Assume the document structure contains fields lastWeekScores and allTimeHighScores
+    const willCurrentHighScore = willUserDoc.exists() ? willUserDoc.data().allTimeHighScores : 0;
+    const kristynCurrentHighScore = kristynUserDoc.exists() ? kristynUserDoc.data().allTimeHighScores : 0;
+  
+    // Compare and potentially update All-Time High Scores
+    const newWillHighScore = Math.max(willScore, willCurrentHighScore);
+    const newKristynHighScore = Math.max(kristynScore, kristynCurrentHighScore);
+  
+    const batch = writeBatch(db);
+  
+    // Update last week's scores and All-Time High Scores if last week's scores are higher
+    batch.update(willUserRef, {
+      lastWeekScores: willScore,
+      allTimeHighScores: newWillHighScore
+    });
+    batch.update(kristynUserRef, {
+      lastWeekScores: kristynScore,
+      allTimeHighScores: newKristynHighScore
     });
   
-    // Calculate scores for weekly chores
-    const weeklyChoresSnapshot = await getDocs(collection(db, 'weeklyChores'));
-    weeklyChoresSnapshot.forEach((doc) => {
-      if (doc.data().completedBy === 'Will') willScore += 2;
-      if (doc.data().completedBy === 'Kristyn') kristynScore += 2;
-      // Reset weekly chores
-      updateDoc(doc.ref, { completedBy: 'null' });
-    });
-  
-    // Calculate scores for monthly chores
-    const monthlyChoresQuery = query(collection(db, 'monthlyChores'), where('completedDate', '>=', oneWeekAgo));
-    const monthlyChoresSnapshot = await getDocs(monthlyChoresQuery);
-    monthlyChoresSnapshot.forEach((doc) => {
-      if (doc.data().completedBy === 'Will') willScore += 3;
-      if (doc.data().completedBy === 'Kristyn') kristynScore += 3;
-      // Do not reset monthly chores
-    });
-  
-  // Update user scores in the database
-  const batch = writeBatch(db);
-
-  const willUserRef = doc(db, 'userScores', 'Will');
-  const kristynUserRef = doc(db, 'userScores', 'Kristyn');
-
-  // Update scores for Will
-  batch.update(willUserRef, {
-    lastWeekScores: willScore,
-    allTimeHighScores: increment(willScore)
-  });
-
-  // Update scores for Kristyn
-  batch.update(kristynUserRef, {
-    lastWeekScores: kristynScore,
-    allTimeHighScores: increment(kristynScore)
-  });
-
-  // Commit the batch
-  await batch.commit();
-  handleScoresUpdated();
-};
+    // Commit the batch update
+    await batch.commit();
+    handleScoresUpdated();
+  };
 
   return (
     <div className="App">
