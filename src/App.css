@@ -1,112 +1,262 @@
+:root {
+  --background-color: #333; /* A dark color for the carbon fiber */
+  --accent-color: #A0D468; /* Lime green color for accents */
+  --text-color: #FFF; /* White text for contrast */
+  --secondary-text-color: #AAA; /* Lighter text for less emphasis */
+  --header-font: 'Orbitron', sans-serif;
+  --body-font: 'Roboto', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--body-font);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  background-image: url('./images/background1.png')
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--header-font);
+  background-color: rgba(0, 0, 0, 0.4); /* For a dark translucent header background */
+  color: var(--accent-color); /* Lime green accent text */
+  padding: 20px;
+  font-size: 2.5rem; /* Adjust the size as needed */
+  letter-spacing: 1px;
+  border-bottom: 4px solid var(--accent-color);
+  height: 60px;
+}
+
+/* Style the div containers for chore components */
+.DailyChores, .WeeklyChores, .MonthlyChores {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #555; /* A lighter border for visibility */
+  border-radius: 8px; /* Slightly rounded corners for a modern look */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th, td {
+  border: 1px solid #555;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+td {
+  background-color: #222; /* Slightly lighter than the body for contrast */
+  color: var(--secondary-text-color);
+}
+
+button {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #8CC152; /* Slightly darker lime green for hover state */
+}
+
+.NewWeekButton {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s;
+  margin: 20px auto; /* Center the button */
+  display: block; /* Ensure the button is block-level for margin auto to work */
+}
+
+.NewWeekButton:hover {
+  background-color: #8CC152; /* Slightly darker lime green for hover state */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--header-font);
+  color: var(--accent-color);
+  margin: 0.5em 0;
+}
+
+p, li, a, span { /* All common text elements */
+  color: var(--text-color);
+}
+
+button:active {
+  background-color: #7ca839; /* Even darker lime green for active state */
+}
+
+input, select, textarea {
+  background-color: #222;
+  color: var(--text-color);
+  border: 1px solid var(--accent-color);
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--secondary-text-color);
+}
+
+.container {
   display: flex;
   flex-direction: column;
+  gap: 20px; /* Creates consistent space between child elements */
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Additional CSS to add to your existing styles */
+.chore-cell {
+  cursor: pointer; /* Indicates the cell is clickable */
+}
+
+.chore-cell {
+  font-weight: bold;
+}
+
+.chore-cell-will {
+  background-color: green; /* Background color for Will's tasks */
+  display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 20px 2px 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.button:hover {
-  background-color: #45a049; /* Darker Green */
-}
-
-.button:active {
-  background-color: #3e8e41;
-}
-
-.weekly-chore-container {
+/* Styling for Kristyn's cells */
+.chore-cell-kristyn {
+  background-color: pink; /* Background color for Kristyn's tasks */
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
-.weekly-chore-container table {
-  margin: 0 auto;
+.cell-initial {
+  font-weight: bold;
+  /* Additional styling as needed (e.g., font size, color) */
 }
 
-.high-scores {
-  background-color: #e6dfdf;
+/* ScoreBoard Style */
+
+.scoreboard {
+  background-color: #222; /* Dark background for contrast */
+  color: var(--accent-color); /* Lime green for text */
+  border-radius: 8px; /* Rounded corners */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  margin-top: 20px; /* Add margin at the top */
-  padding-bottom: 20px; /* Add padding at the bottom */
-  margin-bottom: 40px;
-}
-
-.high-scores h3 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.high-scores p {
-  font-size: 18px;
-  color: #666;
-}
-
-.high-scores .score-container {
+  margin: 20px auto; /* Center the scoreboard */
+  max-width: 600px; /* Adjust based on your preference */
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
+  flex-direction: row; /* Stack scores vertically */
+  align-items: center; /* Center align the items */
 }
 
-.high-scores .score {
-  flex: 1;
-  padding: 10px;
+.scoreboard h2 {
+  font-size: 1.5rem; /* Adjust based on your preference */
+  margin: 0 0 20px 0; /* Spacing below the title */
+  color: var(--text-color); /* White color for the title */
+  width: 100%; /* Ensure the title spans the full width */
 }
 
-.high-scores .score h4 {
-  font-size: 20px;
-  color: #555;
+.scoreboard .score {
+  text-align: center;
+  width: 100%; /* Ensure score sections span the full width of the scoreboard */
 }
 
-.high-scores .score p {
-  font-size: 18px;
-  color: #777;
+.scoreboard .score h3 {
+  font-size: 1.2rem; /* Adjust based on your preference */
+  color: var(--text-color); /* White color for names */
+  margin: 0 0 5px 0; /* Adjusted bottom margin for spacing between name and score */
+}
+
+.scoreboard .score .score-value {
+  font-size: 2.5rem; /* Large, easy-to-read numbers */
+  font-family: var(--header-font); /* Digital look */
+  color: var(--accent-color); /* Lime green for numbers */
+  margin: 0; /* No additional margin needed */
+}
+
+.scoreboard .score .score-indicator {
+  font-size: 1rem; /* Smaller font size for indicators */
+  color: var(--secondary-text-color); /* Lighter text color for descriptors */
+  margin: 10px 0; /* Space below the indicator before the next score */
+}
+
+/* Media Query for Mobile Devices */
+
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column; /* Stack elements vertically */
+    padding: 10px;
+    font-size: 1.8rem; /* Slightly reduce the font size */
+  }
+
+  .scoreboard {
+    flex-direction: column; /* Stack scores vertically on small screens */
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .scoreboard .score {
+    margin-bottom: 20px; /* Add space between scores */
+  }
+
+  .scoreboard .score .score-value,
+  .scoreboard .score .score-indicator {
+    font-size: 2rem; /* Adjust font size for readability */
+  }
+
+  .DailyChores, .WeeklyChores, .MonthlyChores, .HiScores {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  button, .NewWeekButton {
+    padding: 12px 18px; /* Adjust button size for easier tapping */
+    font-size: 0.9em; /* Adjust font size if necessary */
+  }
+
+  /* Adjust table layout for better visibility on smaller screens */
+  table {
+    font-size: 0.9em; /* Reduce font size for table content */
+  }
+
+  th, td {
+    padding: 8px; /* Adjust padding to save space */
+  }
+
+  /* If your tables are too wide, consider scrolling within the table container */
+  .DailyChores, .WeeklyChores, .MonthlyChores {
+    overflow-x: auto; /* Allows horizontal scrolling within these containers */
+  }
 }
