@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import './App.css';
 import ChoreTracker from './components/ChoreTracker';
 import DailyChores from './components/DailyChores';
@@ -9,6 +10,12 @@ import { db } from './Firebase';
 import { collection, getDocs, updateDoc, doc, writeBatch, query, where, increment } from 'firebase/firestore';
 
 function App() {
+  const [refreshScores, setRefreshScores] = useState(false);
+
+  const handleScoresUpdated = () => {
+    setRefreshScores(prev => !prev);
+  };
+
   const calculateAndResetScores = async () => {
     let willScore = 0;
     let kristynScore = 0;
@@ -64,6 +71,7 @@ function App() {
 
   // Commit the batch
   await batch.commit();
+  handleScoresUpdated();
 };
 
   return (
@@ -82,7 +90,7 @@ function App() {
       </div>
       <NewWeekButton onNewWeek={calculateAndResetScores} />
       <div className="HiScores">
-        <HiScores calculateAndResetScores={calculateAndResetScores} />
+        <HiScores refreshTrigger={refreshScores} />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { db } from '../Firebase';
 import { doc, getDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import NewWeekButton from './NewWeekButton';
 
-const HiScores = () => {
+const HiScores = ({ refreshTrigger }) => {
   // Initial state structure corrected
   const [scores, setScores] = useState({
     Will: { lastWeekScores: 0, allTimeHighScores: 0 },
@@ -34,7 +34,7 @@ const HiScores = () => {
     };
 
     fetchScores();
-  }, []);
+  }, [refreshTrigger]);
 
   return (
     <div className="scoreboard">

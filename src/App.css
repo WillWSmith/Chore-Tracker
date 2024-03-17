@@ -149,22 +149,20 @@ input::placeholder, textarea::placeholder {
 
 .chore-cell-will {
   background-color: green; /* Background color for Will's tasks */
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 /* Styling for Kristyn's cells */
 .chore-cell-kristyn {
   background-color: pink; /* Background color for Kristyn's tasks */
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .cell-initial {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  height: 100%;
+  width: 100%;
   font-weight: bold;
-  /* Additional styling as needed (e.g., font size, color) */
 }
 
 /* ScoreBoard Style */
