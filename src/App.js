@@ -77,10 +77,10 @@ function App() {
     const willLastWeekScores = willUserDoc.exists() ? willUserDoc.data().lastWeekScores || 0 : 0;
     const kristynLastWeekScores = kristynUserDoc.exists() ? kristynUserDoc.data().lastWeekScores || 0 : 0;
   
-    // Update last week's scores
-    const newWillLastWeekScores = willLastWeekScores + willScore;
-    const newKristynLastWeekScores = kristynLastWeekScores + kristynScore;
-  
+    // Update last week's scores directly without adding to the previous scores
+    const newWillLastWeekScores = willScore;
+    const newKristynLastWeekScores = kristynScore;
+
     // Update last week scores in the database
     batch.update(willUserRef, { lastWeekScores: newWillLastWeekScores });
     batch.update(kristynUserRef, { lastWeekScores: newKristynLastWeekScores });
