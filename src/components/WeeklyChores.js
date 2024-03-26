@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../Firebase'
-import { collection, getDocs } from 'firebase/firestore';
-import { doc, updateDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useContext } from 'react';
+import { db } from '../Firebase';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import UserStylesContext from '../contexts/UserStylesContext';
 
-const WeeklyChores = () => {
+const WeeklyChores = ({ users }) => {
   const [chores, setChores] = useState([]);
+  const userStyles = useContext(UserStylesContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,38 +23,33 @@ const WeeklyChores = () => {
 
   const updateChoreStatus = async (choreId) => {
     const chore = chores.find(c => c.id === choreId);
-    const currentStatus = chore.completedBy;
-    let nextStatus;
-
-    switch (currentStatus) {
-      case 'null':
-        nextStatus = 'Will';
-        break;
-      case 'Will':
-        nextStatus = 'Kristyn';
-        break;
-      case 'Kristyn':
-        nextStatus = 'null';
-        break;
-      default:
-        nextStatus = 'null';
-        break;
-    }
+    const currentStatus = chore.completedBy || 'null';
+    const currentUserIndex = currentStatus === 'null' ? -1 : users.indexOf(currentStatus);
+    const nextUserIndex = (currentUserIndex + 1) % (users.length + 1);
+    const nextUser = nextUserIndex < users.length ? users[nextUserIndex] : 'null';
 
     try {
       // Update local state
       setChores(prevChores => prevChores.map(c =>
-        c.id === choreId ? { ...c, completedBy: nextStatus } : c
+        c.id === choreId ? { ...c, completedBy: nextUser } : c
       ));
 
       // Update database
       const choreRef = doc(db, 'weeklyChores', choreId);
       await updateDoc(choreRef, {
-        completedBy: nextStatus,
+        completedBy: nextUser,
       });
     } catch (error) {
       console.error("Error updating document: ", error);
     }
+  };
+
+  const getStyleForUser = (userName) => {
+    return userName ? userStyles[userName] || {} : {};
+  };
+
+  const getUserInitial = (userName) => {
+    return userName && userName !== 'null' ? userName.charAt(0) : '';
   };
 
   return (
@@ -67,26 +63,17 @@ const WeeklyChores = () => {
           </tr>
         </thead>
         <tbody>
-          {chores.map(chore => {
-            let cellClass = 'chore-cell';
-            if (chore.completedBy === 'Will') {
-              cellClass += ' chore-cell-will';
-            } else if (chore.completedBy === 'Kristyn') {
-              cellClass += ' chore-cell-kristyn';
-            }
-  
-            return (
-              <tr key={chore.id}>
-                <td>{chore.name}</td>
-                <td className={cellClass}
-                    onClick={() => updateChoreStatus(chore.id)}>
-                  <span className="cell-initial">
-                    {chore.completedBy === 'Will' ? 'W' : chore.completedBy === 'Kristyn' ? 'K' : ''}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
+          {chores.map(chore => (
+            <tr key={chore.id}>
+              <td className="chore-name">{chore.name}</td>
+              <td
+                style={getStyleForUser(chore.completedBy)}
+                onClick={() => updateChoreStatus(chore.id)}
+              >
+                <span className="cell-initial">{getUserInitial(chore.completedBy)}</span>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

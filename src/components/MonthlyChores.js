@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../Firebase'
-import { collection, getDocs } from 'firebase/firestore';
-import { doc, updateDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useContext } from 'react';
+import { db } from '../Firebase';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
+import UserStylesContext from '../contexts/UserStylesContext';
 
-const MonthlyChores = () => {
+const MonthlyChores = ({ users }) => {
   const [chores, setChores] = useState([]);
+  const userStyles = useContext(UserStylesContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,43 +24,20 @@ const MonthlyChores = () => {
 
   const updateChoreStatus = async (choreId) => {
     const chore = chores.find(c => c.id === choreId);
-    const currentStatus = chore.completedBy;
-    let nextStatus;
-    let updateData = {};
-  
-    switch (currentStatus) {
-      case 'null':
-        nextStatus = 'Will';
-        updateData = {
-          completedBy: nextStatus,
-          completedDate: Timestamp.fromDate(new Date()),
-        };
-        break;
-      case 'Will':
-        nextStatus = 'Kristyn';
-        updateData = {
-          completedBy: nextStatus,
-        };
-        break;
-      case 'Kristyn':
-        nextStatus = 'null';
-        updateData = {
-          completedBy: nextStatus,
-        };
-        break;
-      default:
-        nextStatus = 'null';
-        updateData = { completedBy: nextStatus };
-        break;
-    }
-  
+    const currentStatus = chore.completedBy || 'null';
+    const currentUserIndex = currentStatus === 'null' ? -1 : users.indexOf(currentStatus);
+    const nextUserIndex = (currentUserIndex + 1) % (users.length + 1);
+    const nextUser = nextUserIndex < users.length ? users[nextUserIndex] : 'null';
+    const updateData = {
+      completedBy: nextUser,
+      completedDate: nextUser !== 'null' ? Timestamp.fromDate(new Date()) : null,
+    };
+
     try {
-      // Update local state
       setChores(prevChores => prevChores.map(c =>
         c.id === choreId ? { ...c, ...updateData } : c
       ));
-  
-      // Update database
+
       const choreRef = doc(db, 'monthlyChores', choreId);
       await updateDoc(choreRef, updateData);
     } catch (error) {
@@ -68,14 +46,17 @@ const MonthlyChores = () => {
   };
 
   const formatDate = (date) => {
-    if (date && typeof date.toDate === 'function') {
-      return date.toDate().toLocaleDateString();
-    } else if (date instanceof Date) {
-      return date.toLocaleDateString();
-    }
-    return '';
+    if (!date) return '';
+    return typeof date.toDate === 'function' ? date.toDate().toLocaleDateString() : date.toLocaleDateString();
   };
-  
+
+  const getStyleForUser = (userName) => {
+    return userName && userName !== 'null' ? userStyles[userName] || {} : {};
+  };
+
+  const getInitials = (name) => {
+    return name && name !== 'null' ? name.charAt(0) : '';
+  };
 
   return (
     <div>
@@ -91,18 +72,15 @@ const MonthlyChores = () => {
         <tbody>
           {chores.map(chore => (
             <tr key={chore.id}>
-              <td>{chore.name}</td>
-              <td className={`chore-cell ${
-                chore.completedBy === 'Will' ? 'chore-cell-will' : 
-                chore.completedBy === 'Kristyn' ? 'chore-cell-kristyn' : ''
-              }`}
-              onClick={() => updateChoreStatus(chore.id)}>
+              <td className="chore-name">{chore.name}</td>
+              <td style={getStyleForUser(chore.completedBy)}
+                  onClick={() => updateChoreStatus(chore.id)}>
                 <span className="cell-initial">
-                  {chore.completedBy === 'Will' ? 'W' : chore.completedBy === 'Kristyn' ? 'K' : ''}
+                  {getInitials(chore.completedBy)}
                 </span>
               </td>
-              <td>
-                {chore.completedBy ? formatDate(chore.completedDate) : ''}
+              <td className="centerDate">
+                {chore.completedBy !== 'null' ? formatDate(chore.completedDate) : ''}
               </td>
             </tr>
           ))}
