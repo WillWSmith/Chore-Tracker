@@ -69,22 +69,30 @@ function App() {
     const willUserRef = doc(db, 'userScores', 'Will');
     const kristynUserRef = doc(db, 'userScores', 'Kristyn');
   
-    // Fetch current scores from the database
-    const willUserDoc = await getDoc(willUserRef);
-    const kristynUserDoc = await getDoc(kristynUserRef);
-  
-    // Get current last week scores
-    const willLastWeekScores = willUserDoc.exists() ? willUserDoc.data().lastWeekScores || 0 : 0;
-    const kristynLastWeekScores = kristynUserDoc.exists() ? kristynUserDoc.data().lastWeekScores || 0 : 0;
-  
     // Update last week's scores directly without adding to the previous scores
     const newWillLastWeekScores = willScore;
     const newKristynLastWeekScores = kristynScore;
 
+    // Fetch current scores from the database to get the allTimeHighScores
+    const willUserDoc = await getDoc(willUserRef);
+    const kristynUserDoc = await getDoc(kristynUserRef);
+
     // Update last week scores in the database
     batch.update(willUserRef, { lastWeekScores: newWillLastWeekScores });
     batch.update(kristynUserRef, { lastWeekScores: newKristynLastWeekScores });
-  
+    
+    // Compare with high scores and update if necessary
+    const willHighScore = willUserDoc.exists() ? willUserDoc.data().allTimeHighScores || 0 : 0;
+    const kristynHighScore = kristynUserDoc.exists() ? kristynUserDoc.data().allTimeHighScores || 0 : 0;
+
+    if (newWillLastWeekScores > willHighScore) {
+      batch.update(willUserRef, { allTimeHighScores: newWillLastWeekScores });
+    }
+
+  if (newKristynLastWeekScores > kristynHighScore) {
+    batch.update(kristynUserRef, { allTimeHighScores: newKristynLastWeekScores });
+  }
+
     // Commit the batch
     await batch.commit();
     handleScoresUpdated();
