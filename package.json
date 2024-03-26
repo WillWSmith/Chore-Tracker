@@ -1,7 +1,7 @@
 {
   "homepage": "https://willwsmith.github.io/Chore-Tracker",
   "name": "chore-tracker",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
