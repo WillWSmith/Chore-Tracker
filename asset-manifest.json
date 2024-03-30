@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Chore-Tracker/static/css/main.14682d48.css",
+    "main.css": "/Chore-Tracker/static/css/main.1005d6de.css",
     "main.js": "/Chore-Tracker/static/js/main.cb678f17.js",
     "static/js/453.5134e811.chunk.js": "/Chore-Tracker/static/js/453.5134e811.chunk.js",
     "index.html": "/Chore-Tracker/index.html",
-    "main.14682d48.css.map": "/Chore-Tracker/static/css/main.14682d48.css.map",
+    "main.1005d6de.css.map": "/Chore-Tracker/static/css/main.1005d6de.css.map",
     "main.cb678f17.js.map": "/Chore-Tracker/static/js/main.cb678f17.js.map",
     "453.5134e811.chunk.js.map": "/Chore-Tracker/static/js/453.5134e811.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.14682d48.css",
+    "static/css/main.1005d6de.css",
     "static/js/main.cb678f17.js"
   ]
 }
