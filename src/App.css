@@ -47,6 +47,10 @@
   --scoreboard-accent: #6574cd;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
