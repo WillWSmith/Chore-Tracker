@@ -1,50 +1,64 @@
 :root {
-  /* Light Theme Colors */
-  --background-color: #FFFFFF;
-  --accent-color: #007BFF;
-  --text-color: #212529;
-  --secondary-text-color: #6C757D;
-  --header-font: 'Orbitron', sans-serif;
-  --body-font: 'Roboto', sans-serif;
-  --gradient-start: #ffffff;
-  --gradient-end: #f0f0f0;
-  --table-bg: #FFFFFF;
-  --table-text: #212529;
-  --table-hover-bg: #F8F9FA;
-  --table-header-bg: #F0F0F0;
-  --container-bg: #F8F9FA;
-  --container-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.1);
-  --table-bg: #FFFFFF;
-  --table-text: #212529;
-  --table-hover-bg: #EFEFEF;
-  --table-header-bg: #E8E8E8;
-  --table-first-child-bg: #F0F0F0;
-  --newWeekHover: #0056b3;
-  --scoreboard-bg: #EEEEEE;
-  --scoreboard-text: #333;
-  --scoreboard-accent: #007BFF;
+  /* Will's Theme - Dark, Modern, Sleek with Green Accents */
+  --will-bg-main: #0a0f0d;
+  --will-bg-card: #0f1612;
+  --will-bg-hover: #1a2419;
+  --will-accent: #00ff88;
+  --will-accent-glow: rgba(0, 255, 136, 0.3);
+  --will-text-main: #e8f5e9;
+  --will-text-muted: #81c784;
+  --will-border: rgba(0, 255, 136, 0.15);
+  --will-shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+  
+  /* Kristyn's Theme - Girly, Elegant with Pink/Rose Gold Accents */
+  --kristyn-bg-main: #fdf6f9;
+  --kristyn-bg-card: #fff0f7;
+  --kristyn-bg-hover: #ffe4f1;
+  --kristyn-accent: #ff69b4;
+  --kristyn-accent-secondary: #c9a0dc;
+  --kristyn-rose-gold: #b76e79;
+  --kristyn-text-main: #4a2c3d;
+  --kristyn-text-muted: #8b5a6f;
+  --kristyn-border: rgba(255, 105, 180, 0.2);
+  --kristyn-shadow: 0 8px 32px rgba(255, 105, 180, 0.15);
 }
 
-[data-theme='dark'] {
-  /* Dark Theme Colors */
-  --background-color: #121212;
-  --accent-color: #6574cd;
-  --text-color: #E9ECEF;
-  --secondary-text-color: #ADB5BD;
-  --header-font: 'Orbitron', sans-serif;
-  --body-font: 'Roboto', sans-serif;
-  --gradient-start: #292929;
-  --gradient-end: #333333;
-  --table-bg: #1E1E1E;
-  --table-text: #E9ECEF;
-  --table-hover-bg: #292929;
-  --table-header-bg: #242424;
-  --container-bg: #333333;
-  --container-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(0, 0, 0, 0.2);
-  --newWeekHover: #3647ac;
-  --scoreboard-bg: #222;
-  --scoreboard-text: #E9ECEF;
-  --scoreboard-accent: #6574cd;
+[data-theme='will'] {
+  --background-color: var(--will-bg-main);
+  --accent-color: var(--will-accent);
+  --text-color: var(--will-text-main);
+  --secondary-text-color: var(--will-text-muted);
+  --gradient-start: var(--will-bg-main);
+  --gradient-end: var(--will-bg-card);
+  --table-bg: var(--will-bg-card);
+  --table-text: var(--will-text-main);
+  --table-hover-bg: var(--will-bg-hover);
+  --table-header-bg: var(--will-bg-hover);
+  --container-bg: var(--will-bg-card);
+  --container-shadow: var(--will-shadow);
+  --newWeekHover: #00cc6f;
+  --scoreboard-bg: var(--will-bg-card);
+  --scoreboard-text: var(--will-text-main);
+  --scoreboard-accent: var(--will-accent);
+}
+
+[data-theme='kristyn'] {
+  --background-color: var(--kristyn-bg-main);
+  --accent-color: var(--kristyn-accent);
+  --text-color: var(--kristyn-text-main);
+  --secondary-text-color: var(--kristyn-text-muted);
+  --gradient-start: var(--kristyn-bg-main);
+  --gradient-end: var(--kristyn-bg-card);
+  --table-bg: var(--kristyn-bg-card);
+  --table-text: var(--kristyn-text-main);
+  --table-hover-bg: var(--kristyn-bg-hover);
+  --table-header-bg: var(--kristyn-bg-hover);
+  --container-bg: var(--kristyn-bg-card);
+  --container-shadow: var(--kristyn-shadow);
+  --newWeekHover: #e75480;
+  --scoreboard-bg: var(--kristyn-bg-card);
+  --scoreboard-text: var(--kristyn-text-main);
+  --scoreboard-accent: var(--kristyn-accent);
 }
 
 *, *::before, *::after {
@@ -54,10 +68,25 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--body-font);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
   background-image: linear-gradient(145deg, var(--gradient-start), var(--gradient-end));
+  transition: all 0.3s ease;
+}
+
+/* Will's Theme - Cyber Grid Background */
+[data-theme='will'] body {
+  background-image: 
+    linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-color: var(--will-bg-main);
+}
+
+/* Kristyn's Theme - Soft Gradient Background */
+[data-theme='kristyn'] body {
+  background: linear-gradient(135deg, #fdf6f9 0%, #fff0f7 50%, #ffe9f5 100%);
 }
 
 .App {
@@ -66,32 +95,74 @@ body {
 
 .App-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.125);
-  border-bottom: 1px solid var(--accent-color);
+  background-color: var(--container-bg);
+  border-bottom: 2px solid var(--accent-color);
+  padding: 1rem 2rem;
+  box-shadow: var(--container-shadow);
+  position: relative;
 }
 
 h1 {
   text-align: center;
-  flex-grow: 1;
-  padding-left: 20px;
+  font-family: 'Orbitron', sans-serif;
+  color: var(--accent-color);
+  margin: 0;
+  font-size: 2rem;
+}
+
+[data-theme='will'] h1 {
+  background: linear-gradient(135deg, var(--will-accent) 0%, #00cc6f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px var(--will-accent-glow);
+}
+
+[data-theme='kristyn'] h1 {
+  background: linear-gradient(135deg, var(--kristyn-accent) 0%, var(--kristyn-rose-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .theme-toggle-btn {
+  position: absolute;
+  right: 20px;
   cursor: pointer;
   background-color: transparent;
-  border: none;
+  border: 2px solid var(--accent-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-right: 20px;
+  color: var(--accent-color);
+  font-weight: 700;
+  font-size: 1.5rem;
+  font-family: 'Orbitron', sans-serif;
+  transition: all 0.3s ease;
 }
 
-.theme-toggle-btn svg {
-  fill: var(--text-color);
-  transition: fill 0.3s ease;
+.theme-toggle-btn:hover {
+  transform: scale(1.1) rotate(15deg);
+  box-shadow: 0 0 20px var(--accent-color);
+}
+
+[data-theme='will'] .theme-toggle-btn {
+  background: linear-gradient(135deg, var(--will-accent) 0%, #00cc6f 100%);
+  color: #0a0f0d;
+  border-color: var(--will-accent);
+  box-shadow: 0 0 15px var(--will-accent-glow);
+}
+
+[data-theme='kristyn'] .theme-toggle-btn {
+  background: linear-gradient(135deg, var(--kristyn-accent) 0%, var(--kristyn-rose-gold) 100%);
+  color: white;
+  border-color: var(--kristyn-accent);
 }
 
 /* Style the div containers for chore components */
@@ -100,7 +171,8 @@ h1 {
   padding: 20px;
   background-color: var(--container-bg);
   box-shadow: var(--container-shadow);
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--accent-color);
 }
 
 table {
@@ -123,8 +195,12 @@ th, td {
 
 th {
   background-color: var(--table-header-bg);
-  color: var(--text-color);
+  color: var(--accent-color);
   text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
 }
 
 td:hover {
@@ -147,33 +223,43 @@ th:first-child {
 
 .NewWeekButton:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(160, 214, 104, 0.5);
-}
-
-button svg {
-  fill: var(--text-color);
-  transition: fill 0.3s ease;
+  box-shadow: 0 0 0 2px var(--accent-color);
 }
 
 button, .NewWeekButton {
   background-color: var(--accent-color);
-  color: var(--text-color);
+  color: var(--background-color);
   font-weight: bold;
 }
 
 .NewWeekButton {
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 1em;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
   margin: 20px auto;
   display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='will'] .NewWeekButton {
+  background: linear-gradient(135deg, var(--will-accent) 0%, #00cc6f 100%);
+  color: #0a0f0d;
+  box-shadow: 0 0 30px var(--will-accent-glow);
+}
+
+[data-theme='kristyn'] .NewWeekButton {
+  background: linear-gradient(135deg, var(--kristyn-accent) 0%, var(--kristyn-rose-gold) 100%);
+  color: white;
 }
 
 .NewWeekButton:hover {
-  background-color: var(--newWeekHover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .top-btn {
@@ -193,16 +279,17 @@ button, .NewWeekButton {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .top-btn:hover {
-  transform: scale(1.1);
-  background-color: var(--newWeekHover);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--header-font);
+  font-family: 'Orbitron', sans-serif;
   color: var(--accent-color);
   margin: 0.5em 0;
 }
@@ -211,45 +298,10 @@ p, li, a, span {
   color: var(--text-color);
 }
 
-input, select, textarea {
-  background-color: var(--background-color);
-  color: var(--text-color);
-  border: 1px solid var(--accent-color);
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 4px;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(160, 214, 104, 0.5);
-}
-
-input::placeholder, textarea::placeholder {
-  color: var(--secondary-text-color);
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 .chore-cell {
   cursor: pointer;
-}
-
-.chore-cell {
   font-weight: bold;
+  text-align: center;
 }
 
 .cell-initial {
@@ -259,6 +311,8 @@ input::placeholder, textarea::placeholder {
   height: 100%;
   width: 100%;
   font-weight: bold;
+  color: #000;
+  font-size: 1.1rem;
 }
 
 .chore-name {
@@ -267,6 +321,7 @@ input::placeholder, textarea::placeholder {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .chore-name:hover {
@@ -274,25 +329,25 @@ input::placeholder, textarea::placeholder {
   cursor: default;
 }
 
-/* ScoreBoard Style */
-
+/* ScoreBoard Style - Compact like live version */
 .scoreboard {
   background-color: var(--scoreboard-bg);
   color: var(--scoreboard-text);
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: var(--container-shadow);
+  border-radius: 12px;
   padding: 20px;
   margin: 20px auto;
   max-width: 600px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  border: 1px solid var(--accent-color);
 }
 
 .scoreboard h2 {
   font-size: 1.5rem;
   margin: auto;
-  color: var(--scoreboard-accent); /* Use the accent color for headings */
+  color: var(--scoreboard-accent);
 }
 
 .scoreboard .score {
@@ -300,36 +355,42 @@ input::placeholder, textarea::placeholder {
   width: 100%;
 }
 
-.scoreboard .score h3, .scoreboard .score .score-indicator {
-  color: var(--scoreboard-text); /* Ensure text color is readable against the background */
+.scoreboard .score h3 {
+  color: var(--scoreboard-text);
+  font-size: 1rem;
+  margin: 0.25rem 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.scoreboard .score .score-indicator {
+  color: var(--scoreboard-text);
+  font-size: 0.75rem;
+  margin: 0;
 }
 
 .scoreboard .score .score-value {
   font-size: 2.5rem;
-  font-family: var(--header-font);
-  color: var(--text-color); /* Text color for score values for better visibility */
+  font-family: 'Orbitron', sans-serif;
+  color: var(--text-color);
   margin: 0;
+  font-weight: 700;
 }
 
 /* Media Query for Mobile Devices */
-
 @media (max-width: 768px) {
   .App-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.125);
-    border-bottom: 1px solid var(--accent-color);
-    flex-direction: row;
-    padding: 10px;
-    font-size: 0.8rem;
+    padding: 1rem;
   }
   
   h1 {
-    text-align: center;
-    flex-grow: 1;
-    padding-left: 20px;
+    font-size: 1.5rem;
+  }
+
+  .theme-toggle-btn {
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 
   .scoreboard {
@@ -342,8 +403,7 @@ input::placeholder, textarea::placeholder {
     margin-bottom: 20px;
   }
 
-  .scoreboard .score .score-value,
-  .scoreboard .score .score-indicator {
+  .scoreboard .score .score-value {
     font-size: 2rem;
   }
 

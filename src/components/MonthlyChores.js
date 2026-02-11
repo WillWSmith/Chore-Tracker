@@ -10,13 +10,17 @@ const MonthlyChores = ({ users }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, 'monthlyChores'));
-      const choresData = querySnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-        completedDate: doc.data().completedDate ? new Date(doc.data().completedDate.toDate()) : null
-      }));
-      setChores(choresData);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'monthlyChores'));
+        const choresData = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+          completedDate: doc.data().completedDate ? new Date(doc.data().completedDate.toDate()) : null
+        }));
+        setChores(choresData);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
     };
 
     fetchData();
@@ -24,6 +28,8 @@ const MonthlyChores = ({ users }) => {
 
   const updateChoreStatus = async (choreId) => {
     const chore = chores.find(c => c.id === choreId);
+    if (!chore) return;
+    
     const currentStatus = chore.completedBy || 'null';
     const currentUserIndex = currentStatus === 'null' ? -1 : users.indexOf(currentStatus);
     const nextUserIndex = (currentUserIndex + 1) % (users.length + 1);
@@ -58,6 +64,10 @@ const MonthlyChores = ({ users }) => {
     return name && name !== 'null' ? name.charAt(0) : '';
   };
 
+  if (!users || users.length === 0) {
+    return <div><h2>Monthly Chores</h2><p>Loading...</p></div>;
+  }
+
   return (
     <div>
       <h2>Monthly Chores</h2>
@@ -73,8 +83,11 @@ const MonthlyChores = ({ users }) => {
           {chores.map(chore => (
             <tr key={chore.id}>
               <td className="chore-name">{chore.name}</td>
-              <td style={getStyleForUser(chore.completedBy)}
-                  onClick={() => updateChoreStatus(chore.id)}>
+              <td 
+                style={getStyleForUser(chore.completedBy)}
+                className="chore-cell"
+                onClick={() => updateChoreStatus(chore.id)}
+              >
                 <span className="cell-initial">
                   {getInitials(chore.completedBy)}
                 </span>

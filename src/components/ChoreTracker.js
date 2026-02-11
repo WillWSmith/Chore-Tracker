@@ -1,32 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { faMoon } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * Theme toggle placeholder
+ *
+ * The application now uses a single unified dark theme, so there is no
+ * need to switch between light and dark modes.  This component
+ * displays a moon icon to hint at the dark‑themed design but does not
+ * perform any toggling action.  The presence of a button keeps the
+ * header layout consistent and allows for future enhancements.
+ */
 function ChoreTracker() {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-    document.body.setAttribute('data-theme', savedTheme);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.body.setAttribute('data-theme', newTheme);
-  };
-
   return (
-    <button className="theme-toggle-btn" onClick={toggleTheme}>
-{theme === 'light' ? (
-    <FontAwesomeIcon icon={faSun} size="2x" />
-) : (
-    <FontAwesomeIcon icon={faMoon} size="2x" />
-)}
-</button>
+    <button className="theme-toggle-btn" aria-label="Theme toggle" disabled>
+      <FontAwesomeIcon icon={faMoon} size="2x" />
+    </button>
   );
 }
 
 export default ChoreTracker;
+

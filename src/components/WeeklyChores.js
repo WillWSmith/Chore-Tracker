@@ -23,18 +23,18 @@ const WeeklyChores = ({ users }) => {
 
   const updateChoreStatus = async (choreId) => {
     const chore = chores.find(c => c.id === choreId);
+    if (!chore) return;
+    
     const currentStatus = chore.completedBy || 'null';
     const currentUserIndex = currentStatus === 'null' ? -1 : users.indexOf(currentStatus);
     const nextUserIndex = (currentUserIndex + 1) % (users.length + 1);
     const nextUser = nextUserIndex < users.length ? users[nextUserIndex] : 'null';
 
     try {
-      // Update local state
       setChores(prevChores => prevChores.map(c =>
         c.id === choreId ? { ...c, completedBy: nextUser } : c
       ));
 
-      // Update database
       const choreRef = doc(db, 'weeklyChores', choreId);
       await updateDoc(choreRef, {
         completedBy: nextUser,
@@ -45,12 +45,16 @@ const WeeklyChores = ({ users }) => {
   };
 
   const getStyleForUser = (userName) => {
-    return userName ? userStyles[userName] || {} : {};
+    return userName && userName !== 'null' ? userStyles[userName] || {} : {};
   };
 
   const getUserInitial = (userName) => {
     return userName && userName !== 'null' ? userName.charAt(0) : '';
   };
+
+  if (!users || users.length === 0) {
+    return <div><h2>Weekly Chores</h2><p>Loading...</p></div>;
+  }
 
   return (
     <div>
@@ -68,6 +72,7 @@ const WeeklyChores = ({ users }) => {
               <td className="chore-name">{chore.name}</td>
               <td
                 style={getStyleForUser(chore.completedBy)}
+                className="chore-cell"
                 onClick={() => updateChoreStatus(chore.id)}
               >
                 <span className="cell-initial">{getUserInitial(chore.completedBy)}</span>

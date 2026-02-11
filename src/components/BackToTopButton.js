@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
-const BackToTopButton = ({ theme }) => {
+const BackToTopButton = () => {
   const [showTopBtn, setShowTopBtn] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      window.scrollY > 20 ? setShowTopBtn(true) : setShowTopBtn(false);
+      window.scrollY > 300 ? setShowTopBtn(true) : setShowTopBtn(false);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -26,7 +26,7 @@ const BackToTopButton = ({ theme }) => {
   return (
     showTopBtn && (
       <button
-        className={`top-btn ${theme}`}
+        className="top-btn"
         onClick={scrollToTop}
         aria-label="Back to Top"
       >
